@@ -1,0 +1,24 @@
+.operate-wrap{
+  position: absolute;
+  width:20%;
+  right:0;
+  top:0;
+  height:100%;
+  border:1px solid grey;
+  border-radius: 4px;
+  padding: 0 20px;
+  box-sizing: border-box;
+  cursor: pointer;
+}
+.operate-wrap .btn-operate input{
+  margin:4px 0;
+}
+.operate-wrap>.btn-operate{
+  border:1px solid grey;
+  border-radius: 4px;
+  padding: 0 4px;
+}
+.operate-wrap>p:hover{
+  border:1px solid lightseagreen;
+  color:mediumaquamarine;
+}
