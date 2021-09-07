@@ -1,6 +1,6 @@
 <template>
   <div class="sheet-desinger-wrap">
-    <gc-spread-sheets-designer :styleInfo='styleInfo' :spreadOptions="spreadOptions" @designerInitialized='designerInitialized'>
+    <gc-spread-sheets-designer :styleInfo='styleInfo' :config="config" :spreadOptions="spreadOptions" @designerInitialized='designerInitialized'>
     </gc-spread-sheets-designer>
     <div class="operate-wrap">
       
@@ -13,6 +13,7 @@
   
   import GC from '@grapecity/spread-sheets';
   import { Designer } from '@grapecity/spread-sheets-designer-vue'
+  import { pivotSales } from './data.js'
 
   export default {
     name: 'sheetDesinger',
@@ -36,6 +37,7 @@
       designerInitialized(value) {
         this.designer = value;
         this.spread = value.getWorkbook()
+        // this.selectionChanged(this.spread)
         this.initConfig(this.spread)
         this.setShortKey()
         
@@ -44,9 +46,15 @@
           this.isFormatPainting = false; 
       },
       initConfig(spread) {
+        /**
+         * execute对应具体执行内容的function,也就是 load 和 update 方法。
+          iconClass为按钮样式，可以制定按钮图片
+          text为按钮显示文字
+          commandName为命令名称，需要全局唯一
+         */
+        // 注册了 Welcome /brush 两个命令。
         let that = this
-        let defaultConfig = JSON.parse(JSON.stringify(GC.Spread.Sheets.Designer.DefaultConfig))
-        defaultConfig.commandMap = {
+        let commandMap = {
           Welcome: {
             title: "Welcome",
             iconClass: "ribbon-button-welcome",
@@ -58,33 +66,47 @@
 
 
           brush: {
-            title: "格式刷",
+            title: "brush",
             iconClass: "ribbon-button-brush",
             commandName: "brush",
             execute: async (context, propertyName, fontItalicChecked) => {
+              let spread = context.getWorkbook();
               var sheet = spread.getActiveSheet();
-              console.log('格式刷sheet：', sheet)
-              console.log(this, '=========', that);
+              
 
               var selectionRange = sheet.getSelections();
               if (selectionRange.length > 1) {
                 alert("无法对多重选择区域执行此操作");
                 return;
               }
-
-              if (this.isFormatPainting) {
-                this.resetFormatPainting();
+              
+              if (that.isFormatPainting) {
+                that.resetFormatPainting();
                 return;
               }
-
-              this.fromRange = selectionRange[0];
-              this.fromSheet = sheet;
-              this.isFormatPainting = true;
+              that.fromRange = selectionRange[0];
+              that.fromSheet = sheet;
+              that.isFormatPainting = true;
             }
           },
         }
-        // GC.Spread.Sheets.Designer.DefaultConfig = this.config
-        this.designer.setConfig(defaultConfig)
+        let brushCommandGroup = {
+            label: "新设计器",
+            thumbnailClass: "ribbon-thumbnail-brush",
+            commandGroup: {
+                children: [
+                    {
+                        direction: "vertical",
+                        commands: [
+                            "Welcome",
+                            "brush"
+                        ]
+                    }
+                ]
+            }
+        };
+        this.config.ribbon[0].buttonGroups.unshift(brushCommandGroup);
+        this.$set(this.config, 'commandMap', commandMap)
         this.selectionChanged(spread)
       },
       /**
@@ -100,7 +122,7 @@
             sheet.isPaintSuspended(true);
             let toRange = sheet.getSelections()[0];
 
-
+          
             //toRange biger than fromRange
             if (fromRange.rowCount > toRange.rowCount) {
               toRange.rowCount = fromRange.rowCount;
