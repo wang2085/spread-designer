@@ -13,7 +13,6 @@
   
   import GC from '@grapecity/spread-sheets';
   import { Designer } from '@grapecity/spread-sheets-designer-vue'
-  import { pivotSales } from './data.js'
 
   export default {
     name: 'sheetDesinger',

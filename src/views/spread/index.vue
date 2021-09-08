@@ -1,6 +1,7 @@
 <template>
   <div class="sheet-desinger-wrap">
     <gc-spread-sheets-designer :styleInfo='styleInfo' :spreadOptions="spreadOptions" @designerInitialized='designerInitialized'>
+      
     </gc-spread-sheets-designer>
     <div class="operate-wrap">
       <p class="btn-operate">
@@ -22,6 +23,11 @@
       </div>
       
     </div>
+    <div class="spread-cell-dialog"  id="spreadjs-dialog-id">
+      <div v-for="(item, index) in dialogTexts" :key="'cell-dialog-' + index" class="spread-cell-dialog-line">
+        <p @click="fillCellText(item)"> {{item}}</p>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -30,7 +36,7 @@
   
   import GC from '@grapecity/spread-sheets';
   import * as ExcelIO from '@grapecity/spread-excelio';
-  import { Designer } from '@grapecity/spread-sheets-designer-vue'
+  // import { Designer } from '@grapecity/spread-sheets-designer-vue'
 
   export default {
     name: 'sheetDesinger',
@@ -47,7 +53,10 @@
         sheet: null,
         // 选中文件
         sheetFiles: {},
-        isbackImg: false
+        isbackImg: false,
+        // 单元格内容填充
+        curCell: {},
+        dialogTexts: []
       };
     },
     methods: {
@@ -55,6 +64,78 @@
         this.designer = value;
         this.spread = value.getWorkbook()
         this.sheet = this.spread.getActiveSheet()
+
+        this.getCellValue(this.spread)
+      },
+      /**
+       * 填充表单数据
+       */
+      fillCellText(text) {
+        console.log('=============', text);
+        let sheet = this.spread.getActiveSheet()
+        let { row, col } = this.curCell
+        sheet.setValue(row, col, text)
+        document.getElementById('spreadjs-dialog-id').style.visibility = 'hidden'
+      },
+      /**
+       * 单元格内容快速填充
+       */
+      getCellValue(spread) {
+       let that = this
+        
+        spread.bind(GC.Spread.Sheets.Events.EditChange, function (e, info) {
+          let wrap = document.getElementById('spreadjs-dialog-id')
+          let text = info.editingText ? info.editingText.trim() : ''
+          
+          wrap.style.visibility = 'hidden'
+          if(text && text.length){
+            that.dialogTexts = that.filterData(text)
+              if(that.dialogTexts && that.dialogTexts.length) {
+                that.curCell = {
+                  row: info.row,
+                  col: info.col
+                }
+                let { width, x, y } = info.sheet.getCellRect(info.row, info.col)
+                
+                if (wrap) {
+                  wrap.style.visibility = 'visible'
+                  wrap.style.width = width + 'px'
+                  wrap.style.top = y + 212 + 'px'
+                  wrap.style.left = x + 'px'
+                }
+                
+              }
+          } else {
+            // wrap.style.visibility = 'hidden'
+          }
+          spread.bind(GC.Spread.Sheets.Events.CellClick, () => {
+            let wrap = document.getElementById('spreadjs-dialog-id')
+            wrap && (wrap.style.visibility = 'hidden')
+          })
+          spread.bind(GC.Spread.Sheets.Events.SheetTabClick, function (e, info) {
+            let wrap = document.getElementById('spreadjs-dialog-id')
+            wrap && (wrap.style.visibility = 'hidden')
+          });
+        });
+      },
+      /**
+       * 过滤数据
+       */
+      filterData(text) {
+         // 默认内容
+        let sourceData = [
+          '广发银行',
+          '北京银行',
+          '农业银行',
+          '建设银行',
+          '邮政银行',
+          '民生银行',
+        ]
+        let result = []
+        sourceData.forEach(item => {
+          (item.indexOf(text) > -1) && result.push(item)
+        })
+        return result
       },
       /**
        * 去除右侧和底部的空白部分
@@ -141,5 +222,22 @@
   width:100%;
   height:98%;
   position: relative;
+}
+.spread-cell-dialog{
+  visibility:hidden;
+  position: absolute;
+  font-size: 12px;
+  background: #fff;
+  border:1px #C0C0C0 solid;
+  box-shadow: 1px 2px 5px rgba(0,0,0,0.4);
+  z-index: 9999999;
+}
+.spread-cell-dialog p{
+  margin: 0;
+  padding: 4px;
+  cursor: pointer;
+}
+.spread-cell-dialog-line:hover{
+  background: rgba(138,226,137,0.3);
 }
 </style>

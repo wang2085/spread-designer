@@ -14,6 +14,14 @@
         </label>
       </div>
       <p class="btn-operate" @click="remove1">解除合并的单元格</p>
+      <br />
+      <input type="color" @change="colorChange">
+      <p class="btn-operate" @click="setStyle">D列单元格样式</p>
+      <p class="btn-operate">
+        <input type="checkbox" @change="headerCol" />表头单元格操作
+      </p>
+      <p class="btn-operate" @click="isLock">单元格A1是否被锁</p>
+      
     </div>
   </div>
 </template>
@@ -22,7 +30,7 @@
 
   
   import GC from '@grapecity/spread-sheets';
-  import { Designer } from '@grapecity/spread-sheets-designer-vue'
+  // import { Designer } from '@grapecity/spread-sheets-designer-vue'
   import { pivotSales } from './data.js'
 
   export default {
@@ -37,14 +45,17 @@
         },
         designer: null,
         spread: null,
-        sheet: null
+        sheet: null,
+        // 单元格背景色
+        backColor: '#fff',
       };
     },
     methods: {
       designerInitialized(value) {
         this.designer = value;
         this.spread = value.getWorkbook()
-        this.sheet = this.spread.getSheet(0)
+        this.sheet = this.spread.getActiveSheet()  
+        console.log('表格是否处于编辑状态：', this.sheet.endEdit());
       },
       /**
        *   removeSpan   方法来分解指定包含合并的单元格
@@ -94,11 +105,41 @@
        */
       remove1() {
         this.sheet.removeSpan(5, 2)
+      },
+      /**
+       * 设置单元格样式
+       */
+      setStyle() {
+        this.sheet.getCell(1,1).backColor('rgb(0,0,0)')
+        this.sheet.getRange(-1, 3, -1, 1, GC.Spread.Sheets.SheetArea.viewport).backColor(this.backColor);
+      },
+      colorChange(e) {
+        this.backColor = e.target.value
+      },
+      /**
+       * 表头单元格合并和赋值
+       */
+      headerCol(e) {
+        if (e.target.checked) {
+          this.sheet.setValue(0,6,"test6",GC.Spread.Sheets.SheetArea.colHeader); // 给列头单元格赋值
+          this.sheet.addSpan(0,0,3,3,GC.Spread.Sheets.SheetArea.colHeader); // 合并列头单元格
+        } else {  
+          this.sheet.setValue(0,6,"G",GC.Spread.Sheets.SheetArea.colHeader); // 给列头单元格赋值
+          this.sheet.removeSpan(0, 0)
+        }
+      },
+      /**
+       * 获取单元格是否被锁
+       * 
+       */
+      isLock() {
+        let lock = this.spread.getActiveSheet().getCell(1, 1).locked()
+        alert(lock)
       }
     }
   }
 </script>
-<style scoped>
+<style>
 .sheet-desinger-wrap{
   width:100%;
   height:98%;

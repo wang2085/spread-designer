@@ -26,7 +26,8 @@
   import '@grapecity/spread-sheets-designer/styles/gc.spread.sheets.designer.min.css'
   import GC from '@grapecity/spread-sheets';
   
-  import '@grapecity/spread-sheets-pivot-addon/dist/gc.spread.pivot.pivottables.min.js'
+  // import '@grapecity/spread-sheets-pivot-addon/dist/gc.spread.pivot.pivottables.min.js'
+  import "@grapecity/spread-sheets-pivot-addon";
   import '@grapecity/spread-sheets-resources-zh';
   GC.Spread.Common.CultureManager.culture("zh-cn");
   import '@grapecity/spread-sheets-designer-resources-cn';

@@ -9,7 +9,6 @@
 
   
   import GC from '@grapecity/spread-sheets';
-  import "@grapecity/spread-sheets-pivot-addon";
   import { Designer } from '@grapecity/spread-sheets-designer-vue'
   import { pivotSales } from './data.js'
 
