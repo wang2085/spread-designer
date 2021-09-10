@@ -115,3 +115,12 @@ export const pivotData =[["date","salesperson","car","quantity","price","total"]
 [new Date("2020-12-29T00:00:00.000Z"),"Tess","BMW",1,18000],
 [new Date("2020-12-30T00:00:00.000Z"),"Alan","Focus",3,5000],
 [new Date("2020-12-30T00:00:00.000Z"),"John","Audi",3,11000]]
+
+export const sourceData = [["Date","Buyer","Type","Amount"],
+["01-Jan","Mom","Fuel",74],
+["15-Jan","Mom","Food",235],
+["17-Jan","Dad","Sports",20],
+["19-Jan","David","Books",120],
+["20-Jan","Dad","Food",160],
+["21-Jan","David","Sports",15],
+["21-Jan","Kelly","Books",125]];
