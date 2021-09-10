@@ -17,7 +17,8 @@
   import Header from './views/Layout/header.vue'
   import Nav from './views/Layout/nav.vue'
   import Footer from './views/Layout/footer.vue'
-
+  GC.Spread.Common.CultureManager.culture("zh-cn");
+  import '@grapecity/spread-sheets-designer-resources-cn';
   // import '@grapecity/spread-sheets/styles/gc.spread.sheets.excel2013white.css'
   // import '@grapecity/spread-sheets/styles/gc.spread.sheets.excel2013darkGray.css'
   // import '@grapecity/spread-sheets/styles/gc.spread.sheets.excel2016darkGray.css'
@@ -29,8 +30,7 @@
   // import '@grapecity/spread-sheets-pivot-addon/dist/gc.spread.pivot.pivottables.min.js'
   import "@grapecity/spread-sheets-pivot-addon";
   import '@grapecity/spread-sheets-resources-zh';
-  GC.Spread.Common.CultureManager.culture("zh-cn");
-  import '@grapecity/spread-sheets-designer-resources-cn';
+
   import "./custom.css"
 
   export default {

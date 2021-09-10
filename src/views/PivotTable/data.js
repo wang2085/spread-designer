@@ -1,4 +1,4 @@
-export const pivotSales =[["date","salesperson","car","quantity","price","total"],
+export const pivotData =[["date","salesperson","car","quantity","price","total"],
 [new Date("2020-01-02T00:00:00.000Z"),"Serena","Mercedes",7,27000],
 [new Date("2020-01-03T00:00:00.000Z"),"John","Focus",4,5000],
 [new Date("2020-01-04T00:00:00.000Z"),"Alan","Mercedes",1,27000],
